@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriGrow - Agricultural Products</title>
+    
+    <!-- Bootstrap 5 CSS (Updated CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome (Updated CDN) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --light-green: #4caf50;
+            --dark-green: #1b5e20;
+            --earth-brown: #5d4037;
+            --light-brown: #8d6e63;
+            --off-white: #f5f5f5;
+        }
+        
+        body {
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary-green) !important;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        .nav-link {
+            color: var(--dark-green) !important;
+        }
+        
+        .hero-section {
+            background: linear-gradient(rgba(46, 125, 50, 0.85), rgba(27, 94, 32, 0.9));
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: -1;
+        }
+        
+        .product-card {
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #e0e0e0;
+            height: 100%;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .product-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+            background-color: #f5f5f5;
+        }
+        
+        .product-category {
+            color: var(--light-green);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .product-price {
+            color: var(--primary-green);
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .card-footer {
+            background-color: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .btn-agri {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .btn-agri:hover {
+            background-color: var(--dark-green);
+            color: white;
+        }
+        
+        .filter-btn {
+            background-color: white;
+            color: var(--primary-green);
+            border: 1px solid var(--primary-green);
+            margin: 2px;
+            border-radius: 20px;
+            padding: 6px 15px;
+        }
+        
+        .filter-btn.active {
+            background-color: var(--primary-green);
+            color: white;
+        }
+        
+        .filter-btn:hover:not(.active) {
+            background-color: #e8f5e9;
+        }
+        
+        .cart-badge {
+            background-color: var(--light-green);
+        }
+        
+        .footer {
+            background-color: var(--dark-green);
+            color: white;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+        }
+        
+        .footer a {
+            color: #c8e6c9;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+        
+        .product-stock {
+            font-size: 0.85rem;
+        }
+        
+        .in-stock {
+            color: var(--light-green);
+        }
+        
+        .low-stock {
+            color: #ff9800;
+        }
+        
+        .out-of-stock {
+            color: #f44336;
+        }
+        
+        .rating {
+            color: #ffc107;
+        }
+        
+        .pagination .page-link {
+            color: var(--primary-green);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background-color: var(--primary-green);
+            border-color: var(--primary-green);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 50px 0;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .product-img {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-seedling me-2"></i>AgriGrow
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Products</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contact</a>
+                    </li>
+                </ul>
+                <div class="d-flex">
+                    <a href="#" class="btn btn-outline-success me-2">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="badge cart-badge ms-1">3</span>
+                    </a>
+                    <a href="#" class="btn btn-agri">My Account</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="container text-center">
+            <h1 class="display-4 fw-bold mb-3">Premium Agricultural Products</h1>
+            <p class="lead mb-4">High-quality seeds, fertilizers, tools, and equipment for modern farming</p>
+            <div class="input-group mb-3 w-75 mx-auto">
+                <input type="text" class="form-control" placeholder="Search for products...">
+                <button class="btn btn-agri" type="button">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Filter Section -->
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <h3 class="mb-3">Our Products</h3>
+                <div class="btn-group flex-wrap" role="group">
+                    <button type="button" class="btn filter-btn active" data-filter="all">All</button>
+                    <button type="button" class="btn filter-btn" data-filter="seeds">Seeds</button>
+                    <button type="button" class="btn filter-btn" data-filter="fertilizers">Fertilizers</button>
+                    <button type="button" class="btn filter-btn" data-filter="tools">Tools</button>
+                    <button type="button" class="btn filter-btn" data-filter="equipment">Equipment</button>
+                    <button type="button" class="btn filter-btn" data-filter="organic">Organic</button>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Sort by: Price (Low to High)
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#">Price (Low to High)</a></li>
+                        <li><a class="dropdown-item" href="#">Price (High to Low)</a></li>
+                        <li><a class="dropdown-item" href="#">Name (A-Z)</a></li>
+                        <li><a class="dropdown-item" href="#">Popularity</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row g-4" id="products-container">
+            <!-- Product cards will be loaded by JavaScript -->
+        </div>
+        
+        <!-- Pagination -->
+        <nav class="mt-5">
+            <ul class="pagination justify-content-center">
+                <li class="page-item disabled">
+                    <a class="page-link" href="#" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                <li class="page-item">
+                    <a class="page-link" href="#">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5><i class="fas fa-seedling me-2"></i>AgriGrow</h5>
+                    <p>Providing high-quality agricultural products since 2010. We support farmers with the best tools and supplies for sustainable farming.</p>
+                </div>
+                <div class="col-md-2 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Products</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Categories</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Seeds</a></li>
+                        <li><a href="#">Fertilizers</a></li>
+                        <li><a href="#">Farming Tools</a></li>
+                        <li><a href="#">Irrigation</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h5>Contact Us</h5>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Farm Road, Agriculture City</li>
+                        <li><i class="fas fa-phone me-2"></i> (123) 456-7890</li>
+                        <li><i class="fas fa-envelope me-2"></i> info@agrigrow.com</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2023 AgriGrow. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="me-3"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Product Data and Script -->
+    <script>
+        // Product data - UPDATE THESE IMAGE PATHS with YOUR images
+        const products = [
+            {
+                id: 1,
+                name: "Premium Wheat Seeds",
+                category: "seeds",
+                price: 24.99,
+                image: "images/wheet.jpg", // ← Change to your image
+                description: "High-yield wheat seeds suitable for various climates.",
+                stock: "in-stock",
+                rating: 4.5
+            },
+            {
+                id: 2,
+                name: "Organic Fertilizer 20kg",
+                category: "fertilizers",
+                price: 39.99,
+                image: "images/Fertilizer.jpg", // ← Change to your image
+                description: "All-natural fertilizer for organic farming.",
+                stock: "in-stock",
+                rating: 4.2
+            },
+            {
+                id: 3,
+                name: "Professional Pruning Shears",
+                category: "tools",
+                price: 18.50,
+                image: "images/shears.jpg", // ← Change to your image
+                description: "Sharp, durable pruning shears for garden maintenance.",
+                stock: "low-stock",
+                rating: 4.7
+            },
+            {
+                id: 4,
+                name: "Drip Irrigation Kit",
+                category: "equipment",
+                price: 89.99,
+                image: "images/drip.jpg", // ← Change to your image
+                description: "Complete drip irrigation system for efficient watering.",
+                stock: "in-stock",
+                rating: 4.8
+            },
+            {
+                id: 5,
+                name: "Organic Tomato Seeds",
+                category: "seeds",
+                price: 8.99,
+                image: "images/tomato_seeds.jpg", // ← Change to your image
+                description: "Heirloom tomato seeds for organic gardening.",
+                stock: "in-stock",
+                rating: 4.4
+            },
+            {
+                id: 6,
+                name: "NPK Granular Fertilizer",
+                category: "fertilizers",
+                price: 29.99,
+                image: "images/npk_fertilizer.jpg", // ← Change to your image
+                description: "Balanced NPK fertilizer for optimal plant growth.",
+                stock: "in-stock",
+                rating: 4.1
+            },
+            {
+                id: 7,
+                name: "Compost Bin 200L",
+                category: "organic",
+                price: 75.00,
+                image: "images/compost_bin.jpg", // ← Change to your image
+                description: "Large capacity compost bin for organic waste.",
+                stock: "out-of-stock",
+                rating: 4.6
+            },
+            {
+                id: 8,
+                name: "Garden Hoe",
+                category: "tools",
+                price: 22.50,
+                image: "images/gardenhoe.jpg", // ← Change to your image
+                description: "Sturdy garden hoe for soil preparation and weeding.",
+                stock: "in-stock",
+                rating: 4.3
+            }
+        ];
+
+        // Function to render products
+        function renderProducts(filter = 'all') {
+            const container = document.getElementById('products-container');
+            container.innerHTML = '';
+            
+            const filteredProducts = filter === 'all' 
+                ? products 
+                : products.filter(product => product.category === filter);
+            
+            filteredProducts.forEach(product => {
+                const stockText = product.stock === 'in-stock' ? 'In Stock' 
+                                : product.stock === 'low-stock' ? 'Low Stock' 
+                                : 'Out of Stock';
+                
+                // Generate star ratings
+                let stars = '';
+                const fullStars = Math.floor(product.rating);
+                const hasHalfStar = product.rating % 1 >= 0.5;
+                
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= fullStars) {
+                        stars += '<i class="fas fa-star"></i>';
+                    } else if (i === fullStars + 1 && hasHalfStar) {
+                        stars += '<i class="fas fa-star-half-alt"></i>';
+                    } else {
+                        stars += '<i class="far fa-star"></i>';
+                    }
+                }
+                
+                const productCard = `
+                    <div class="col-lg-3 col-md-4 col-sm-6">
+                        <div class="card product-card h-100">
+                            <img src="${product.image}" class="product-img" alt="${product.name}" onerror="this.src='https://placehold.co/600x400/4CAF50/FFFFFF?text=${encodeURIComponent(product.name)}'">
+                            <div class="card-body d-flex flex-column">
+                                <span class="product-category">${product.category.charAt(0).toUpperCase() + product.category.slice(1)}</span>
+                                <h5 class="card-title">${product.name}</h5>
+                                <p class="card-text flex-grow-1">${product.description}</p>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="product-price">$${product.price.toFixed(2)}</span>
+                                    <span class="product-stock ${product.stock}">
+                                        <i class="fas fa-${product.stock === 'in-stock' ? 'check-circle' : product.stock === 'low-stock' ? 'exclamation-triangle' : 'times-circle'} me-1"></i>
+                                        ${stockText}
+                                    </span>
+                                </div>
+                                <div class="rating mb-2">
+                                    ${stars}
+                                    <span class="text-muted ms-1">(${product.rating})</span>
+                                </div>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <div class="d-grid">
+                                    <button class="btn btn-agri add-to-cart" data-id="${product.id}">
+                                        <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                container.innerHTML += productCard;
+            });
+            
+            // Add event listeners to Add to Cart buttons
+            document.querySelectorAll('.add-to-cart').forEach(button => {
+                button.addEventListener('click', function() {
+                    const productId = this.getAttribute('data-id');
+                    const product = products.find(p => p.id == productId);
+                    alert(`Added "${product.name}" to cart!`);
+                    
+                    // Update cart badge
+                    const badge = document.querySelector('.cart-badge');
+                    let count = parseInt(badge.textContent) || 0;
+                    badge.textContent = count + 1;
+                });
+            });
+        }
+        
+        // Initialize page with all products
+        document.addEventListener('DOMContentLoaded', function() {
+            renderProducts();
+            
+            // Add event listeners to filter buttons
+            document.querySelectorAll('.filter-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    document.querySelectorAll('.filter-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Filter products
+                    const filter = this.getAttribute('data-filter');
+                    renderProducts(filter);
+                });
+            });
+            
+            // Search functionality
+            document.querySelector('.btn-agri[type="button"]').addEventListener('click', function() {
+                const searchTerm = document.querySelector('input[type="text"]').value.toLowerCase();
+                if (searchTerm) {
+                    const filtered = products.filter(product => 
+                        product.name.toLowerCase().includes(searchTerm) ||
+                        product.description.toLowerCase().includes(searchTerm) ||
+                        product.category.toLowerCase().includes(searchTerm)
+                    );
+                    
+                    const container = document.getElementById('products-container');
+                    container.innerHTML = '';
+                    
+                    if (filtered.length === 0) {
+                        container.innerHTML = `
+                            <div class="col-12 text-center py-5">
+                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                <h4>No products found for "${searchTerm}"</h4>
+                                <p class="text-muted">Try a different search term</p>
+                            </div>
+                        `;
+                    } else {
+                        // Temporarily render filtered products
+                        const tempProducts = products;
+                        products = filtered;
+                        renderProducts('all');
+                        products = tempProducts;
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
